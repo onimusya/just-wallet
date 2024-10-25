@@ -1,26 +1,15 @@
 import { useState } from 'react'
-import { AppRoot, Cell, List, Section } from '@telegram-apps/telegram-ui';
-
-import { CellSection } from '@/components/CellSection';
-import { BannerSection } from '@/components/BannerSection';
-
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
 // import './App.css'
 
-const cellsTexts = ['Chat Settings', 'Data and Storage', 'Devices'];
-
 function App() {
-  //const [count, setCount] = useState(0)
-
+    
   return (
-    <>
-      <List>
-        <CellSection />
-        <BannerSection />
-      </List>
-    </>
-  )
+    <div className="min-h-screen bg-gradient-to-b from-neutral-900 to-neutral-950 text-white p-6">
+      <div className="max-w-4xl mx-auto">
+        Testing
+      </div>
+    </div>
+  );
 }
 
 export default App
