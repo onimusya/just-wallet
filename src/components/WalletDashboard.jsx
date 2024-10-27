@@ -7,7 +7,11 @@ import { AssetCard } from "./AssetCard";
 import { TransactionCard } from "./TransactionCard";
 import { mockAssets, mockTransactions } from "@/lib/mockData";
 
-export function WalletDashboard({ onLock }) {
+export function WalletDashboard({ onLock, identity }) {
+  console.log(`[WalletDashboard] identity:`, identity);
+  var walletMask = identity.principal.slice(0, 6) + "..." + identity.principal.slice(identity.principal.length-6);
+  console.log(`[WalletDashboard] walletMask:`, walletMask);
+
   return (
     <div className="space-y-8">
       {/* Header */}

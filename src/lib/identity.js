@@ -10,6 +10,8 @@ var identities = {};
 
 const processId = (id, type) => {
   var p = id.getPrincipal().toString();
+  console.log(`[identity][processId] p:`, p);
+  
   identities[p] = id;
   return {
     principal : p,
@@ -37,6 +39,9 @@ const JustIdentity = {
         case "private":
           localStorage.setItem('_m', optdata.mnemonic);
           id = mnemonicToId(optdata.mnemonic);
+
+          console.log(`[identity][private] id:`, id);
+
           encrypt(optdata.mnemonic, id.getPrincipal().toString(), optdata.password).then(_em => {
             var ems = localStorage.getItem('_em');
             if (!ems) {

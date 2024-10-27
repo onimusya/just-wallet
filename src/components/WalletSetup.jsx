@@ -29,6 +29,7 @@ export function WalletSetup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [identity, setIdentity] = useState({});
   const [error, setError] = useState("");
   const { toast } = useToast();
 
@@ -94,7 +95,7 @@ export function WalletSetup() {
     }
   };
   
-  const handleCreatePassword = () => {
+  const handleCreatePassword = async () => {
     if (password.length < 8) {
       setError("Password must be at least 8 characters long");
       return;
@@ -105,6 +106,15 @@ export function WalletSetup() {
       return;
     }
 
+    // Setup wallet
+    var id = await JustIdentity.setup("private", { 
+      mnemonic: seedPhrase.join(" "),
+      password: password
+    });
+
+    console.log(`[WalletSetup][handleCreatePassword] id:`, id);
+    setIdentity(id);
+
     // In a real app, you would hash the password and store it securely
     setStep("dashboard");
     toast({
@@ -113,7 +123,6 @@ export function WalletSetup() {
       duration: 3000,
     });
   };
-
 
   const handleLockWallet = () => {
     setStep("unlock");
@@ -143,7 +152,7 @@ export function WalletSetup() {
   }
 
   if (step === "dashboard") {    
-    return <WalletDashboard onLock={handleLockWallet} />;
+    return <WalletDashboard onLock={handleLockWallet} identity={identity} />;
   }  
 
   if (step === "import") {
