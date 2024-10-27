@@ -6,6 +6,7 @@ import { PlusCircle, Download, Shield, ChevronRight, Copy, RefreshCcw, Lock, Eye
 import { useToast } from "@/hooks/use-toast";
 import { JustIdentity } from "@/lib/identity";
 import { WalletDashboard } from "./WalletDashboard";
+import { ImportWallet } from "./ImportWallet";
 import { UnlockWallet } from "./UnlockWallet";
 
 // Mock seed phrase generation (in production, use a proper crypto library)
@@ -147,12 +148,12 @@ export function WalletSetup() {
 
   if (step === "import") {
     // TODO
-    //return (
-    //  <ImportWallet 
-    //    onBack={() => setStep("initial")}
-    //    onImport={() => setStep("dashboard")}
-    //  />
-    //);
+    return (
+      <ImportWallet 
+        onBack={() => setStep("initial")}
+        onImport={() => setStep("dashboard")}
+      />
+    );
   }  
 
   if (step === "password") {
