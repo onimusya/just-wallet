@@ -3,7 +3,33 @@
     "whoami_backend": {
       "main": "backend/whoami/src/main.mo",
       "type": "motoko"
-    }
+    },
+    "basic_ethereum": {
+      "candid": "backend/basic_ethereum/basic_ethereum.did",
+      "package": "basic_ethereum",
+      "type": "custom",
+      "build": [
+        "cargo build --manifest-path ./backend/basic_ethereum/Cargo.toml --no-default-features --target wasm32-unknown-unknown --release"
+      ],
+      "wasm": "backend/basic_ethereum/target/wasm32-unknown-unknown/release/basic_ethereum.wasm",
+      "metadata": [
+        {
+          "name": "candid:service"
+        }
+      ]
+    },
+    "evm_rpc": {
+      "type": "custom",
+      "candid": "https://github.com/internet-computer-protocol/evm-rpc-canister/releases/download/release-2024-05-23/evm_rpc.did",
+      "wasm": "https://github.com/internet-computer-protocol/evm-rpc-canister/releases/download/release-2024-05-23/evm_rpc.wasm.gz",
+      "remote": {
+        "id": {
+          "ic": "7hfb6-caaaa-aaaar-qadga-cai"
+        }
+      },
+      "specified_id": "7hfb6-caaaa-aaaar-qadga-cai",
+      "init_arg": "(record { nodesInSubnet = 28 })"
+    }    
   },
   "defaults": {
     "build": {

@@ -1,4 +1,7 @@
 {
+  "basic_ethereum": {
+    "ic": "6vsxy-2yaaa-aaaam-adpoq-cai"
+  },
   "whoami_backend": {
     "ic": "6avgv-3qaaa-aaaam-adpna-cai"
   }

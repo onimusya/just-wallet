@@ -12,6 +12,7 @@ import { mockAssets, mockTransactions } from "@/lib/mockData";
 import extjs from '../lib/extjs';
 
 import { idlFactory as whoamiIDL } from "@/declarations/whoami_backend/whoami_backend.did.js";
+import { idlFactory as basicEthereumIDL } from "@/declarations/basic_ethereum/basic_ethereum.did.js";
 
 export function WalletDashboard({ onLock, identity, connection }) {
   const [principalMask, setPrincipalMask] = useState("");
@@ -25,6 +26,9 @@ export function WalletDashboard({ onLock, identity, connection }) {
   console.log(`[WalletDashboard] whoami canister id:`, process.env.CANISTER_ID_WHOAMI_BACKEND);
   //connection.idl(process.env.CANISTER_ID_WHOAMI_BACKEND, whoamiIDL);
   var whoamiCanister = connection.canister(process.env.CANISTER_ID_WHOAMI_BACKEND, whoamiIDL);
+
+  console.log(`[WalletDashboard] basic_ethereum canister id:`, process.env.CANISTER_ID_BASIC_ETHEREUM);
+  var basicEthereumCanister = connection.canister(process.env.CANISTER_ID_BASIC_ETHEREUM, basicEthereumIDL);
 
   const handleCopyIdentityToClipboard = async () => {
     await navigator.clipboard.writeText(identity.principal);

@@ -29,3 +29,5 @@ dist-ssr
 
 .dfx/
 .mops/
+
+backend/basic_ethereum/target/*

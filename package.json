@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy-ethereum-main": "dfx deploy --ic basic_ethereum --argument '(opt record {ethereum_network = opt variant {Sepolia}; ecdsa_key_name = opt variant {TestKey1}})'",
+    "deploy-ethereum-local": "dfx deploy basic_ethereum --argument '(opt record {ethereum_network = opt variant {Sepolia}; ecdsa_key_name = opt variant {TestKeyLocalDevelopment}})'"
   },
   "dependencies": {
     "@dfinity/agent": "^2.1.2",
