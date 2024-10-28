@@ -11,6 +11,8 @@ import { principalToAccountIdentifier } from "@/lib/utils.js";
 import { mockAssets, mockTransactions } from "@/lib/mockData";
 import extjs from '../lib/extjs';
 
+import { idlFactory as whoamiIDL } from "@/declarations/whoami_backend/whoami_backend.did.js";
+
 export function WalletDashboard({ onLock, identity, connection }) {
   const [principalMask, setPrincipalMask] = useState("");
   const [icpBalance, setIcpBalance] = useState("");
@@ -18,11 +20,12 @@ export function WalletDashboard({ onLock, identity, connection }) {
 
   var icpToken = connection.token();
   console.log(`[WalletDashboard] icpToken:`, icpToken);
-
   console.log(`[WalletDashboard] identity:`, identity);
-  //var walletMask = identity.principal.slice(0, 6) + "..." + identity.principal.slice(identity.principal.length-6);
-  //console.log(`[WalletDashboard] walletMask:`, walletMask);
-  
+
+  console.log(`[WalletDashboard] whoami canister id:`, process.env.CANISTER_ID_WHOAMI_BACKEND);
+  //connection.idl(process.env.CANISTER_ID_WHOAMI_BACKEND, whoamiIDL);
+  var whoamiCanister = connection.canister(process.env.CANISTER_ID_WHOAMI_BACKEND, whoamiIDL);
+
   const handleCopyIdentityToClipboard = async () => {
     await navigator.clipboard.writeText(identity.principal);
 
@@ -46,6 +49,9 @@ export function WalletDashboard({ onLock, identity, connection }) {
       console.log(`[WalletDashboare][useEffect] account:${accountId} balance:`, balance);
       console.log(`[WalletDashboare][useEffect] account:${accountId} typeof balance:`, typeof balance);
       setIcpBalance(bal.toString());
+
+      var id = await whoamiCanister.whoami();
+      console.log(`[WalletDashboare][useEffect] whoami:`, id.toText());
     }
 
     load();

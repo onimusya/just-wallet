@@ -17,6 +17,8 @@ function App() {
   const [connection, setConnection] = useState(null);
   const [identity, setIdentity] = useState(null);
 
+  console.log(`[App] process.env:`, process.env);
+  
   const handleWalletSelect = (wallet) => {
     localStorage.removeItem("_m");
     console.log(`[App][handleWalletSelect] wallet:`, wallet);

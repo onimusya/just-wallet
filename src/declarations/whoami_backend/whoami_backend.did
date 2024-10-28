@@ -1,0 +1,10 @@
+type JustTry = 
+ service {
+   argument: () -> (principal) query;
+   cycle_balance: () -> (nat);
+   id: () -> (principal);
+   idQuick: () -> (principal);
+   installer: () -> (principal) query;
+   whoami: () -> (principal);
+ };
+service : (principal) -> JustTry
