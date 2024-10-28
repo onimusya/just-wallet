@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { ChevronLeft, KeyRound, FileText, AlertCircle } from "lucide-react";
+import { JustIdentity } from "@/lib/identity";
 
 export function ImportWallet({ onBack, onImport }) {
   const [seedPhrase, setSeedPhrase] = useState("");
@@ -20,14 +21,30 @@ export function ImportWallet({ onBack, onImport }) {
         setError("Please enter all 24 words of your seed phrase");
         return;
       }
+
+      if (!JustIdentity.validateMnemonic(seedPhrase.trim())) {
+        setError("Invalid seed phrase!");
+        return;
+      }
+    
+      onImport({
+        value: words,
+        type: "seed"
+      });
     } else {
       if (!privateKey.startsWith("0x") || privateKey.length !== 66) {
         setError("Please enter a valid private key");
         return;
       }
+
+      onImport({
+        value: privateKey,
+        type: "key"
+      });
+    
     }
 
-    onImport();
+    
   };
 
   return (

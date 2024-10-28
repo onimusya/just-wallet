@@ -3,8 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Lock, Eye, EyeOff } from "lucide-react";
+import { JustIdentity } from "@/lib/identity";
 
-export function UnlockWallet({ onUnlock }) {
+export function UnlockWallet({ onUnlock, identity }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -14,7 +15,21 @@ export function UnlockWallet({ onUnlock }) {
       setError("Please enter your password");
       return;
     }
-    onUnlock(password);
+
+    console.log(`[UnlockWallet][handleUnlock] Identity to unlock:`, identity);
+    JustIdentity.unlock(identity, { password: password}).then((value) => {
+      console.log(`[UnlockWallet][handleUnlock] Decrypt identity:`, value);
+      if (value.principal !== identity.principal) {
+        setError("You entered wrong password!");  
+      } else {
+        onUnlock(password);
+      }
+      
+    }).catch((error) => {
+      console.log(`[UnlockWallet][handleUnlock] Error:`, error);
+      setError("Failed to unlock your wallet!");
+    });
+    
   };
 
   const handleKeyDown = (e) => {

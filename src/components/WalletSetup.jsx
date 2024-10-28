@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PlusCircle, Download, Shield, ChevronRight, Copy, RefreshCcw, Lock, Eye, EyeOff } from "lucide-react";
+import { PlusCircle, Download, Shield, ChevronRight, Copy, RefreshCcw, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { JustIdentity } from "@/lib/identity";
 import { WalletDashboard } from "./WalletDashboard";
 import { ImportWallet } from "./ImportWallet";
 import { UnlockWallet } from "./UnlockWallet";
-
+import { WalletSwitcher } from "./WalletSwitcher";
 // Mock seed phrase generation (in production, use a proper crypto library)
 const generateSeedPhrase = () => {
   const words = [
@@ -20,7 +20,7 @@ const generateSeedPhrase = () => {
   return words;
 };
 
-export function WalletSetup() {
+export function WalletSetup({ onWalletSetup }) {
   const [step, setStep] = useState("initial");
   const [seedPhrase, setSeedPhrase] = useState([]);
   const [verificationWords, setVerificationWords] = useState([]);
@@ -30,6 +30,7 @@ export function WalletSetup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [identity, setIdentity] = useState({});
+  const [isCreatingPassword, setIsCreatingPassword] = useState(false);
   const [error, setError] = useState("");
   const { toast } = useToast();
 
@@ -95,7 +96,7 @@ export function WalletSetup() {
     }
   };
   
-  const handleCreatePassword = async () => {
+  const handleCreatePassword = () => {
     if (password.length < 8) {
       setError("Password must be at least 8 characters long");
       return;
@@ -107,21 +108,29 @@ export function WalletSetup() {
     }
 
     // Setup wallet
-    var id = await JustIdentity.setup("private", { 
+    setIsCreatingPassword(true);
+  
+    JustIdentity.setup("private", { 
       mnemonic: seedPhrase.join(" "),
       password: password
-    });
+    }).then((id) => {
 
-    console.log(`[WalletSetup][handleCreatePassword] id:`, id);
-    setIdentity(id);
+      console.log(`[WalletSetup][handleCreatePassword] id:`, id);
+      setIdentity(id);
+  
+      toast({
+        title: "Wallet Created",
+        description: "Your wallet has been created and secured with a password",
+        duration: 3000,
+      });
+  
+      setIsCreatingPassword(false);
 
-    // In a real app, you would hash the password and store it securely
-    setStep("dashboard");
-    toast({
-      title: "Wallet Created",
-      description: "Your wallet has been created and secured with a password",
-      duration: 3000,
+      // In a real app, you would hash the password and store it securely
+      onWalletSetup(id);
+
     });
+    
   };
 
   const handleLockWallet = () => {
@@ -147,6 +156,22 @@ export function WalletSetup() {
     }
   };
 
+  const handleImport = ({value, type}) => {
+    if (type == "seed") {
+      console.log(`[WalletSetup][handleImport] Seed phrase:`, value);      
+      setSeedPhrase(value);
+      setStep("password");
+
+    } else {
+      toast({
+        title: "Import Wallet",
+        description: "Import private key is not supported at this moment.",
+        duration: 3000,
+      });
+
+    }
+  }
+
   if (step === "unlock") {
     return <UnlockWallet onUnlock={handleUnlockWallet} />;
   }
@@ -160,7 +185,7 @@ export function WalletSetup() {
     return (
       <ImportWallet 
         onBack={() => setStep("initial")}
-        onImport={() => setStep("dashboard")}
+        onImport={handleImport}
       />
     );
   }  
@@ -185,11 +210,13 @@ export function WalletSetup() {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    disabled={isCreatingPassword}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+                    disabled={isCreatingPassword}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -205,11 +232,13 @@ export function WalletSetup() {
                     placeholder="Confirm your password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    disabled={isCreatingPassword}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+                    disabled={isCreatingPassword}
                   >
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -221,13 +250,23 @@ export function WalletSetup() {
               )}
 
               <div className="pt-2">
-                <Button 
-                  className="w-full bg-blue-600 hover:bg-blue-700" 
-                  onClick={handleCreatePassword}
-                >
-                  <Lock className="w-4 h-4 mr-2" />
-                  Create Password
-                </Button>
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700" 
+                    onClick={handleCreatePassword}
+                    disabled={isCreatingPassword}
+                  >
+                  {isCreatingPassword ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Creating Wallet...
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-4 h-4 mr-2" />
+                      Create Password
+                    </>
+                  )}
+                  </Button>
               </div>
             </div>
           </CardContent>

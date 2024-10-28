@@ -65,6 +65,7 @@ const JustIdentity = {
   load : (_id) => {
     return new Promise(async (resolve, reject) => {
       var id;
+
       switch (_id.type) {
         case "private":
           if (!isLoaded(_id.principal)) { 
@@ -104,12 +105,16 @@ const JustIdentity = {
             var ems = JSON.parse(t);
             var em;
 
+            console.log(`[identity][unlock] _id 1:`, _id)
             if (ems.hasOwnProperty(_id.principal) === false) return reject("No encrypted seed to decrypt");           
             em = ems[_id.principal];
             
             decrypt(em, _id.principal, optdata.password).then(mnemonic => {
+              console.log(`[identity][unlock] _id 2:`, _id)
               localStorage.setItem('_m', mnemonic);
               id = mnemonicToId(mnemonic);
+              console.log(`[identity][unlock] id:`, id)
+
               return resolve(processId(id, _id.type));
             }).catch(reject);
             return;
