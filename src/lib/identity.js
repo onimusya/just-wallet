@@ -10,6 +10,7 @@ var identities = {};
 
 const processId = (id, type) => {
   var p = id.getPrincipal().toString();
+  console.log(`[identity][processId] id:`, id);
   console.log(`[identity][processId] p:`, p);
   
   identities[p] = id;

@@ -6,11 +6,15 @@ import { UnlockWallet } from "@/components/UnlockWallet";
 import { Toaster } from "@/components/ui/toaster";
 import { getStoredWallets } from "@/lib/storage";
 import { JustIdentity } from "@/lib/identity";
+import { useToast } from "@/hooks/use-toast";
+import extjs from './lib/extjs';
+
 // import './App.css'
 
 function App() {
   const [currentView, setCurrentView] = useState("initial");
   const [currentWallet, setCurrentWallet] = useState(null);
+  const [connection, setConnection] = useState(null);
   const [identity, setIdentity] = useState(null);
 
   const handleWalletSelect = (wallet) => {
@@ -26,7 +30,15 @@ function App() {
   };  
 
   const handleUnlock = (password) => {
-    setCurrentView("dashboard");
+
+    var wallet = JustIdentity.getIdentity(identity.principal);
+    console.log(`[App][handleUnlock] wallet:`, wallet);
+    if (!wallet) {
+      alert("Missing wallet!");
+    } else {
+      setConnection(extjs.connect('https://icp0.io/', wallet));
+      setCurrentView("dashboard");
+    }
   }
 
   const handleLock = () => {
@@ -39,7 +51,16 @@ function App() {
 
   const handleWalletSetup = (id) => {
     setIdentity(id);
-    setCurrentView("dashboard");
+
+    var wallet = JustIdentity.getIdentity(id.principal);
+    console.log(`[App][handleWalletSetup] wallet:`, wallet);
+    if (!wallet) {
+      alert("Missing wallet!");
+    } else {
+      setConnection(extjs.connect('https://icp0.io/', wallet));
+      setCurrentView("dashboard");
+    }
+    
   }
 
   useEffect(() => {
@@ -63,6 +84,7 @@ function App() {
           <WalletDashboard 
             onLock={handleLock}            
             identity={identity}
+            connection={connection}
           />
         )}
       </div>

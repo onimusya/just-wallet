@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,10 +9,15 @@ import { AssetCard } from "./AssetCard";
 import { TransactionCard } from "./TransactionCard";
 import { principalToAccountIdentifier } from "@/lib/utils.js";
 import { mockAssets, mockTransactions } from "@/lib/mockData";
+import extjs from '../lib/extjs';
 
-export function WalletDashboard({ onLock, identity }) {
+export function WalletDashboard({ onLock, identity, connection }) {
   const [principalMask, setPrincipalMask] = useState("");
+  const [icpBalance, setIcpBalance] = useState("");
   const { toast } = useToast();
+
+  var icpToken = connection.token();
+  console.log(`[WalletDashboard] icpToken:`, icpToken);
 
   console.log(`[WalletDashboard] identity:`, identity);
   //var walletMask = identity.principal.slice(0, 6) + "..." + identity.principal.slice(identity.principal.length-6);
@@ -28,6 +33,24 @@ export function WalletDashboard({ onLock, identity }) {
     });
   };
 
+  useEffect(() => { 
+
+    const load = async () => {
+      var metadata = await icpToken.getMetadata();
+      console.log(`[WalletDashboare][useEffect] metadata:`, metadata);
+  
+      var accountId = principalToAccountIdentifier(identity.principal, 0);
+  
+      var balance = await icpToken.getBalance(accountId);
+      var bal = Number(balance) / 100000000;
+      console.log(`[WalletDashboare][useEffect] account:${accountId} balance:`, balance);
+      console.log(`[WalletDashboare][useEffect] account:${accountId} typeof balance:`, typeof balance);
+      setIcpBalance(bal.toString());
+    }
+
+    load();
+
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -78,8 +101,8 @@ export function WalletDashboard({ onLock, identity }) {
       {/* Balance Card */}
       <Card className="bg-neutral-900 border-neutral-800">
         <CardHeader>
-          <CardTitle className="text-4xl font-bold text-white">2.458 ICP</CardTitle>
-          <CardDescription className="text-neutral-400">≈ $4,523.67 USD</CardDescription>
+          <CardTitle className="text-4xl font-bold text-white">{icpBalance} ICP</CardTitle>
+          <CardDescription className="text-neutral-400">...</CardDescription>
         </CardHeader>
         <CardContent className="flex gap-4">
           <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
@@ -94,6 +117,8 @@ export function WalletDashboard({ onLock, identity }) {
       </Card>
 
       {/* Main Content */}
+      {
+        /*
       <Tabs defaultValue="assets" className="space-y-4">
         <TabsList className="bg-neutral-900 border-neutral-800">
           <TabsTrigger value="assets" className="data-[state=active]:bg-neutral-800">
@@ -116,6 +141,9 @@ export function WalletDashboard({ onLock, identity }) {
           ))}
         </TabsContent>
       </Tabs>
+
+        */
+      }
     </div>
   );
 }
