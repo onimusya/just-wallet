@@ -65,6 +65,11 @@ function App() {
     
   }
 
+  const handleCreateWallet = () => {
+    console.log(`[App][handleCreateWallet] ...`);
+    setCurrentView("setup");
+  }
+
   useEffect(() => {
     var w = getStoredWallets();
     console.log(`[App][useEffect] w:`, w)
@@ -80,7 +85,7 @@ function App() {
       <div className="max-w-4xl mx-auto">
         {currentView === "initial" && <>Loading</>}
         {currentView === "setup" && <WalletSetup onWalletSetup={handleWalletSetup} />}
-        {currentView === "switch" && <WalletSwitcher onWalletSelect={handleWalletSelect} />}
+        {currentView === "switch" && <WalletSwitcher onWalletSelect={handleWalletSelect} onWalletCreate={handleCreateWallet} />}
         {currentView === "unlock" && <UnlockWallet onUnlock={handleUnlock} identity={identity} />}
         {currentView === "dashboard" && identity && (
           <WalletDashboard 

@@ -28,7 +28,7 @@ interface WalletSwitcherProps {
 }
 */
 
-export function WalletSwitcher({ onWalletSelect }) {
+export function WalletSwitcher({ onWalletSelect, onWalletCreate }) {
   const [wallets, setWallets] = useState([]);
   const [selectedWallet, setSelectedWallet] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -117,7 +117,7 @@ export function WalletSwitcher({ onWalletSelect }) {
         onNewWalletNameChange={setNewWalletName}
       />
 
-      <Card className="bg-neutral-900 border-neutral-800 border-dashed hover:bg-neutral-800/50 transition-colors cursor-pointer">
+      <Card className="bg-neutral-900 border-neutral-800 border-dashed hover:bg-neutral-800/50 transition-colors cursor-pointer" onClick={() => { onWalletCreate() }}>
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
